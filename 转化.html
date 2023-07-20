@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>临时住宿信息登记</title>
+    <script type="text/javascript" src="jquery-2.1.1.js"></script>
+  
+
+    <script type="text/javascript" src="xlsx.core.min.js"></script>
+</head>
+<body>
+<div style="margin: 10px;">   
+   <input id="file" type="file" name="file">
+</div>
+</body>
+<script type="text/javascript">
+  
+$("#file").change(function(e) {  
+    var files = e.target.files;
+        var fileReader = new FileReader();
+        fileReader.onload = function(ev) {
+           
+            var data = ev.target.result
+            var workbook = XLSX.read(data, {
+                type: 'binary'
+            }) // 以二进制流方式读取得到整份excel表格对象
+            var persons = []; // 存储获取到的数据
+           
+            // 表格的表格范围，可用于判断表头是否数量是否正确
+            var fromTo = '';
+            // 遍历每张表读取
+            for (var sheet in workbook.Sheets) {
+                if (workbook.Sheets.hasOwnProperty(sheet)) {
+                    fromTo = workbook.Sheets[sheet]['!ref'];
+                    var persons = XLSX.utils.sheet_to_json(workbook.Sheets[sheet]);
+                    var cn_p = [];
+                    var en_p = [];
+                    // $.each(persons,function(i,v){
+                    //     var key = v.lan;
+                    //     var obj1 = {};
+                    //     var obj2 = {};
+                    //     obj1[key] = v.name_cn
+                    //     obj2[key] = v.name_en
+                    //     cn_p.push(obj1);
+                    //     en_p.push(obj2);
+                    // })
+                    // console.log(JSON.stringify(cn_p));
+                    // console.log(JSON.stringify(en_p));
+                    console.log(JSON.stringify(XLSX.utils.sheet_to_json(workbook.Sheets[sheet])));
+                    // persons = persons.concat(XLSX.utils.sheet_to_json(workbook.Sheets[sheet]));
+                    // break; // 如果只取第一张表，就取消注释这行
+                }
+            }
+            //在控制台打印出来表格中的数据
+            // console.log(persons);
+            // $("#area").val(JSON.stringify(persons));
+        };
+        // 以二进制方式打开文件
+        fileReader.readAsBinaryString(files[0]);
+    });
+
+
+</script>
+</html>
